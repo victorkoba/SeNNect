@@ -6,6 +6,7 @@ import PaginaInicial from "../src/screens/PaginaInicial";
 import Perfil from "../src/screens/Perfil";
 import Login from "../src/screens/Login";
 import Mensagens from "../src/screens/Mensagens";
+import Cadastro from "../src/screens/Cadastro"
 
 const Tab = createBottomTabNavigator();
 function BottomTabs() {
@@ -22,6 +23,10 @@ function BottomTabs() {
         <Tab.Screen
           name="Mensagens"
           component={Mensagens}
+        />
+        <Tab.Screen
+          name="Cadastro"
+          component={Cadastro}
         />
       </Tab.Navigator>
   );
