@@ -7,6 +7,7 @@ import {
   Image,
   StyleSheet,
   Alert,
+  ImageBackground,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import {
@@ -21,9 +22,10 @@ import {
 import { getApp } from 'firebase/app';
 import s3 from '../../awsConfig';
 import aws from 'aws-sdk';
+import { auth, db } from '../../firebaseConfig'; 
+
 
 const S3_BUCKET = '';
-
 
 const registerUser = async (email, password, nome, imageUri) => {
   const auth = getAuth(getApp());
@@ -79,7 +81,6 @@ const Cadastro = ({ navigation }) => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 1,
     });
-    console.log(result )
 
     if (!result.canceled && result.assets.length > 0) {
       setImageUri(result.assets[0].uri);
@@ -96,55 +97,69 @@ const Cadastro = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Criar Conta</Text>
-
-      <Pressable onPress={pickImage} style={styles.imageContainer}>
-        {imageUri ? (
-          <Image source={{ uri: imageUri }} style={styles.image} />
-        ) : (
-          <Text style={styles.imagePlaceholder}>Selecionar Foto</Text>
-        )}
+    <ImageBackground
+      source={require('../assets/v915-wit-008-b.jpg')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <Pressable style={styles.voltar} onPress={() => navigation.goBack()}>
+        <Text style={styles.voltarTexto}>← Voltar</Text>
       </Pressable>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Nome"
-        placeholderTextColor="#aaa"
-        value={nome}
-        onChangeText={setNome}
-      />
+      <View style={styles.container}>
+        <Text style={styles.titulo}>CRIE SUA CONTA</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#aaa"
-        autoCapitalize="none"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
+        <Pressable onPress={pickImage} style={styles.imageContainer}>
+          {imageUri ? (
+            <Image source={{ uri: imageUri }} style={styles.image} />
+          ) : (
+            <Text style={styles.imagePlaceholder}>Selecionar Foto</Text>
+          )}
+        </Pressable>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        placeholderTextColor="#aaa"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Nome"
+          placeholderTextColor="#aaa"
+          value={nome}
+          onChangeText={setNome}
+        />
 
-      <Pressable style={styles.botao} onPress={handleRegister}>
-        <Text style={styles.botaoTexto}>Cadastrar</Text>
-      </Pressable>
-    </View>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor="#aaa"
+          autoCapitalize="none"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Senha"
+          placeholderTextColor="#aaa"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+
+        <Pressable style={styles.botao} onPress={handleRegister}>
+          <Text style={styles.botaoTexto}>Cadastrar</Text>
+        </Pressable>
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     padding: 24,
     justifyContent: 'center',
   },
@@ -165,7 +180,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   botao: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#C94C4C',
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',
@@ -195,6 +210,26 @@ const styles = StyleSheet.create({
     lineHeight: 120,
     color: '#777',
     fontSize: 16,
+  },
+  voltar: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 5,
+    zIndex: 1,
+  },
+  voltarTexto: {
+    color: '#C94C4C',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
