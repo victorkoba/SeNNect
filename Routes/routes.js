@@ -27,29 +27,17 @@ function BottomTabs() {
   );
 }
 
-const Drawer = createDrawerNavigator();
-export default function DrawerNavigation() {
-  return (
-      <Drawer.Navigator>
-        <Drawer.Screen
-          name="Login"
-          component={NativeStack}
-        />
-        <Drawer.Screen
-          name="PaginaInicial"
-          component={BottomTabs}
-        />
-      </Drawer.Navigator>
-  );
-}
-
 const Stack = createStackNavigator();
-function NativeStack() {
+export default function NativeStack() {
   return (
       <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="Login">
         <Stack.Screen
           name="Login"
           component={Login}
+        />
+        <Stack.Screen
+          name="PaginaInicial"
+          component={BottomTabs}
         />
       </Stack.Navigator>
   );
