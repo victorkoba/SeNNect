@@ -57,7 +57,7 @@ const RealizarLogin = () => {
             <Text style={styles.buttonText}>Entrar</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate("")}>
+          <TouchableOpacity onPress={() => navigation.navigate("Cadastro")}>
             <Text style={styles.botCadastrar}>Cadastre-se!</Text>
           </TouchableOpacity>
         </View>

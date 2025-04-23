@@ -24,10 +24,7 @@ function BottomTabs() {
           name="Mensagens"
           component={Mensagens}
         />
-        <Tab.Screen
-          name="Cadastro"
-          component={Cadastro}
-        />
+        
       </Tab.Navigator>
   );
 }
@@ -35,15 +32,10 @@ function BottomTabs() {
 const Stack = createStackNavigator();
 export default function NativeStack() {
   return (
-      <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="Login">
-        <Stack.Screen
-          name="Login"
-          component={Login}
-        />
-        <Stack.Screen
-          name="PaginaInicial"
-          component={BottomTabs}
-        />
-      </Stack.Navigator>
+    <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="Login">
+    <Stack.Screen name="Login" component={Login} />
+    <Stack.Screen name="Cadastro" component={Cadastro} />
+    <Stack.Screen name="PaginaInicial" component={BottomTabs} />
+  </Stack.Navigator>
   );
 }
