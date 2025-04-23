@@ -7,7 +7,7 @@ import DrawerNavigation from "./Routes/routes";
 export default function App() {
   return (
     <NavigationContainer>
-      <DrawerNavigation />
+      <NativeStack />
     </NavigationContainer>
   );
 }

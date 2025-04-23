@@ -17,8 +17,8 @@ const RealizarLogin = () => {
   const navigation = useNavigation();
 
   const tentarLogin = () => {
-    if (email === '' && password === '') {
-      navigation.navigate('BoasVindas');
+    if (email === 'victor' && password === '123') {
+      navigation.navigate('PaginaInicial');
     } else {
       alert('Usuário não cadastrado!');
     }
