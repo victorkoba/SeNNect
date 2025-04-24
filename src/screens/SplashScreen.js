@@ -9,14 +9,14 @@ const SplashScreen = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigation.replace('Login');
-    }, 500); // 3 segundos
+    }, 3000); 
 
     return () => clearTimeout(timer);
   }, [navigation]);
 
   return (
     <ImageBackground
-      source={require('../assets/splash.jpg')} // Você pode trocar a imagem de fundo aqui
+      source={require('../assets/splash.jpg')} 
       style={styles.background}
     >
     </ImageBackground>

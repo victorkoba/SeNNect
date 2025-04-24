@@ -1,13 +1,13 @@
-// Miguel Francisco da Silva Sales e Victor Luiz Koba Batista
 import React, { useState } from 'react';
 import { View, TextInput, Button, Alert } from 'react-native';
 import { db } from '../../../firebaseConfig';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
-export default function EnviarMensagem({ route }) {
+export default function EnviarMensagem({ destinatarioId }) {
   const [mensagem, setMensagem] = useState('');
-  const remetenteId = 'user1'; // Substituir com ID do usuário logado
-  const destinatarioId = route.params.destinatarioId;
+  const auth = getAuth();
+  const remetenteId = auth.currentUser?.uid;
 
   const conversaId = [remetenteId, destinatarioId].sort().join('_');
 
@@ -29,7 +29,7 @@ export default function EnviarMensagem({ route }) {
   };
 
   return (
-    <View style={{ padding: 20 }}>
+    <View style={{ padding: 10 }}>
       <TextInput
         placeholder="Digite sua mensagem..."
         value={mensagem}

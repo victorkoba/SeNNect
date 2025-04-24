@@ -1,33 +1,42 @@
-// Miguel Francisco da Silva Sales e Victor Luiz Koba BatistaS
 import { useEffect, useState } from 'react';
 import { db } from '../../../firebaseConfig';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { Alert } from 'react-native';
 
-export const useMensagens = (conversaId, userId) => {
+export default function useMensagem(remetenteId, destinatarioId) {
   const [mensagens, setMensagens] = useState([]);
+  const conversaId = [remetenteId, destinatarioId].sort().join('_');
 
   useEffect(() => {
-    const q = query(collection(db, 'mensagens', conversaId, 'mensagens'), orderBy('createdAt'));
-    const unsubscribe = onSnapshot(q, snapshot => {
-      const novas = [];
-      const dados = snapshot.docs.map(doc => {
-        const data = doc.data();
-        if (!data.lida && data.destinatarioId === userId) {
-          novas.push(data);
+    console.log('Remetente ID:', remetenteId);  // Verificar remetenteId
+    console.log('Destinatário ID:', destinatarioId);  // Verificar destinatarioId
+    if (!remetenteId || !destinatarioId) return;
+
+    const q = query(
+      collection(db, 'mensagens', conversaId, 'mensagens'),
+      orderBy('createdAt', 'asc')
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const msgs = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      console.log('Mensagens recebidas:', msgs); // Verificar mensagens recebidas
+
+      setMensagens(msgs);
+
+      if (msgs.length > 0) {
+        const ultimaMensagem = msgs[msgs.length - 1];
+        if (ultimaMensagem.remetenteId !== remetenteId) {
+          Alert.alert('Nova mensagem', 'Você recebeu uma nova mensagem!');
         }
-        return { id: doc.id, ...data };
-      });
-
-      if (novas.length > 0) {
-        Alert.alert('Nova mensagem!', novas[0].texto);
       }
-
-      setMensagens(dados);
     });
 
     return () => unsubscribe();
-  }, [conversaId]);
+  }, [remetenteId, destinatarioId]);
 
   return mensagens;
-};
+}

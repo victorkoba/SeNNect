@@ -26,7 +26,7 @@ import aws from 'aws-sdk';
 import { auth, db } from '../../firebaseConfig';
 
 
-const S3_BUCKET = '';
+const S3_BUCKET = 'sennect-30-22';
 
 const registerUser = async (email, password, nome, imageUri) => {
   const auth = getAuth(getApp());

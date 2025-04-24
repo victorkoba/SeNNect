@@ -10,18 +10,22 @@ import {
   Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { app } from '../../firebaseConfig';
 
-const RealizarLogin = () => {
+const RealizarLogin = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation();
 
   const tentarLogin = () => {
-    if (email === 'victor' && password === '123') {
-      navigation.navigate('PaginaInicial');
-    } else {
-      alert('Usuário não cadastrado!');
-    }
+      const auth = getAuth(app);
+      signInWithEmailAndPassword(auth, email, password)
+          .then(() => {
+              navigation.navigate('PaginaPrincipal');
+          })
+          .catch((error) => {
+              console.error('Falha no login:', error);
+          });
   };
 
   return (
