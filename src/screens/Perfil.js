@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { getAuth, updatePassword } from 'firebase/auth';
+import { getAuth, updatePassword, signOut } from 'firebase/auth';
 import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { getApp } from 'firebase/app';
 import * as ImagePicker from 'expo-image-picker';
@@ -20,6 +20,16 @@ import s3 from '../../awsConfig';
 const S3_BUCKET = 'sennect-30-22';
 
 const Perfil = ({ navigation }) => {
+  const handleLogout = async () => {
+    try {
+      await signOut(auth); // Logout do Firebase
+      navigation.navigate('Login'); // Navega para a tela de login
+    } catch (error) {
+      console.error("Erro ao sair da conta:", error.message);
+      Alert.alert('Erro', 'Não foi possível sair da conta.');
+    }
+  }
+
   const auth = getAuth(getApp());
   const firestore = getFirestore(getApp());
 
@@ -112,6 +122,7 @@ const Perfil = ({ navigation }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Image source={require('../assets/logo-sennect.jpg')} style={{ width: 100, height: 100, margin: "auto"}} />
       <Text style={styles.titulo}>Perfil do Usuário</Text>
 
       <Pressable onPress={pickImage} style={styles.imageContainer}>
@@ -161,6 +172,9 @@ const Perfil = ({ navigation }) => {
         <Pressable style={styles.botao} onPress={handleSalvar}>
           <Text style={styles.botaoTexto}>Salvar Alterações</Text>
         </Pressable>
+        <Pressable style={styles.botaoLogout} onPress={handleLogout}>
+          <Text style={styles.botaoTexto}>Sair da conta</Text>
+        </Pressable>
       </View>
     </ScrollView>
   );
@@ -168,7 +182,7 @@ const Perfil = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f2f2f2',
+    backgroundColor: '#fff',
     padding: 24,
     paddingBottom: 48,
     flexGrow: 1,
@@ -200,12 +214,19 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   botao: {
-    backgroundColor: '#ff4d4d',
+    backgroundColor: '#ff0000',
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 12,
   },
+  botaoLogout: {
+    backgroundColor: '#ff0000',
+    padding: 5,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 30,
+  },  
   botaoSecundario: {
     backgroundColor: '#888',
     padding: 12,

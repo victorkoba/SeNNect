@@ -8,7 +8,7 @@ import {
   PostContainer, 
   LikeButton, 
   LikeText, 
-  CommentInput 
+  CommentInput
 } from './styles';
 import Feather from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';

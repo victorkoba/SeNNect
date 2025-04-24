@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   cardLogin: {
     width: '100%',
     maxWidth: 400,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: '#ffffff',
     padding: 25,
     borderRadius: 12,
     borderWidth: 1,
