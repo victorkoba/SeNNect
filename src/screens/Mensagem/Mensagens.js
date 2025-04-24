@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, FlatList, Text } from 'react-native';
-import { useMensagens } from './hooks/useMensagens';
+import useMensagens from './useMensagens';
 
 export default function Mensagens({ route }) {
   const { destinatarioId } = route.params;

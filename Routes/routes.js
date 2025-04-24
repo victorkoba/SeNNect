@@ -12,8 +12,8 @@ import SplashScreen from "../src/screens/SplashScreen";
 import CriarPost from "../src/screens/PaginaPrincipal/CriarPost";
 
 // Telas de mensagens
-import Mensagens from "../src/screens/Mensagens"; // Tela que lista ou exibe as mensagens
-import EnviarMensagem from "../src/screens/Mensagens/EnviarMensagem"; // Tela de chat individual
+import Mensagens from "../src/screens/Mensagem/Mensagens"; // Tela que lista ou exibe as mensagens
+import EnviarMensagem from "../src/screens/Mensagem/EnviarMensagem"; // Tela de chat individual
 
 const Tab = createBottomTabNavigator();
 
