@@ -9,6 +9,7 @@ import Login from "../src/screens/Login";
 import Mensagens from "../src/screens/Mensagens";
 import Cadastro from "../src/screens/Cadastro"
 import CriarPost from "../src/screens/PaginaPrincipal/CriarPost";
+import SplashScreen from '../src/screens/SplashScreen';
 
 const Tab = createBottomTabNavigator();
 function BottomTabs() {
@@ -46,7 +47,8 @@ function BottomTabs() {
 const Stack = createStackNavigator();
 export default function NativeStack() {
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="Login">
+    <Stack.Navigator initialRouteName="SplashScreen" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="SplashScreen" component={SplashScreen} />
     <Stack.Screen name="Login" component={Login} />
     <Stack.Screen name="Cadastro" component={Cadastro} />
     <Stack.Screen name="PaginaInicial" component={BottomTabs} />
