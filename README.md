@@ -1,5 +1,5 @@
 
-# Aplicativo Teste
+# SeNNect
 
 Este é um aplicativo mobile desenvolvido com **React Native** e **Expo**, utilizando serviços da **AWS (S3)** e **Firebase (Authentication + Firestore)**.
 
