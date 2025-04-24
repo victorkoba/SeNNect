@@ -1,21 +1,41 @@
-import styled from "styled-components/native";
+import styled from 'styled-components/native';
 
-export const Container = styled.SafeAreaView``;
+export const Container = styled.SafeAreaView`
+  flex: 1;
+  background-color: #fff;
+  padding: 20px;
+`;
+
+export const UploadButton = styled.TouchableOpacity`
+  background-color: #ededed;
+  padding: 12px;
+  border-radius: 10px;
+  align-items: center;
+  margin-bottom: 15px;
+`;
+
+export const UploadText = styled.Text`
+  font-size: 16px;
+  color: #333;
+`;
+
+export const ImageArea = styled.View`
+  width: 100%;
+  height: 200px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+`;
 
 export const Input = styled.TextInput`
   background-color: #f1f1f1;
-  margin-bottom: 20px;
   padding: 10px;
   border-radius: 8px;
   font-size: 16px;
-`;
-
-export const ImageInput = styled.TextInput`
-  background-color: #f1f1f1;
+  height: 100px;
   margin-bottom: 20px;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 16px;
+  text-align-vertical: top;
 `;
 
 export const SubmitButton = styled.TouchableOpacity`
