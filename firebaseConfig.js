@@ -1,5 +1,4 @@
 // Miguel Francisco da Silva Sales e Victor Luiz Koba Batista
-// firebaseConfig.js
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 

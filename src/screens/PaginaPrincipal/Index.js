@@ -1,7 +1,15 @@
 // Miguel Francisco da Silva Sales e Victor Luiz Koba Batista
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, FlatList } from 'react-native';
-import { Container, ButtonPost, PostImage, PostContainer, LikeButton, LikeText } from './styles';
+import { View, Text, FlatList, TextInput } from 'react-native';
+import { 
+  Container, 
+  ButtonPost, 
+  PostImage, 
+  PostContainer, 
+  LikeButton, 
+  LikeText, 
+  CommentInput 
+} from './styles';
 import Feather from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
@@ -14,14 +22,20 @@ function PaginaInicial() {
   useEffect(() => {
     const q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const lista = snapshot.docs.map(doc => ({
-        id: doc.id,
-        image: doc.data().imagemUrl,
-        descricao: doc.data().descricao,
-        userName: doc.data().userName || 'Usuário desconhecido',
-        liked: false,
-      }));
+      const lista = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          image: data.imagemUrl || null,
+          descricao: data.descricao || '',
+          userName: data.userName || 'Usuário desconhecido',
+          liked: false,
+          comment: '',
+        };
+      });
       setPosts(lista);
+    }, (error) => {
+      console.error("Erro ao buscar posts:", error);
     });
 
     return () => unsubscribe();
@@ -33,19 +47,32 @@ function PaginaInicial() {
     ));
   };
 
+  const handleCommentChange = (id, text) => {
+    setPosts(posts.map(post =>
+      post.id === id ? { ...post, comment: text } : post
+    ));
+  };
+
   const renderItem = ({ item }) => (
     <PostContainer>
       <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>{item.userName}</Text>
-      <PostImage source={{ uri: item.image }} />
+      {item.image && <PostImage source={{ uri: item.image }} />}
       <Text style={{ marginVertical: 5 }}>{item.descricao}</Text>
+
       <LikeButton onPress={() => toggleLike(item.id)}>
         <Feather 
-          name={item.liked ? 'heart' : 'heart'} 
+          name="heart" 
           color={item.liked ? '#e60000' : '#aaa'} 
           size={24} 
         />
         <LikeText>{item.liked ? 'Curtido' : 'Curtir'}</LikeText>
       </LikeButton>
+
+      <CommentInput
+        placeholder="Adicione um comentário..."
+        value={item.comment}
+        onChangeText={(text) => handleCommentChange(item.id, text)}
+      />
     </PostContainer>
   );
 

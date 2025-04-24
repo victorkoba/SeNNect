@@ -8,16 +8,19 @@ import { db } from '../../../firebaseConfig';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import uuid from 'react-native-uuid';
 import { getAuth } from 'firebase/auth';
+import s3 from '../../../awsConfig'
 
 export default function CriarPost() {
   const [descricao, setDescricao] = useState('');
   const [imagem, setImagem] = useState(null);
   const navigation = useNavigation();
 
+  bucket_name = 'sennect-30-22';
+
   const abrirGaleria = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permissão negada', 'Você precisa permitir o acesso à galeria para continuar.');
+      alert('Permissão negada', 'Você precisa permitir o acesso à galeria para continuar.');
       return;
     }
 
@@ -34,48 +37,39 @@ export default function CriarPost() {
 
   const handlePostar = async () => {
     if (!descricao || !imagem) {
-      Alert.alert('Erro', 'Adicione uma descrição e uma imagem.');
+      alert('Erro', 'Adicione uma descrição e uma imagem.');
       return;
     }
-
+  
     const auth = getAuth();
     const user = auth.currentUser;
     const imageId = uuid.v4();
-
+  
     try {
-      // 1. Pede presigned URL da API
-      const response = await fetch('http://SEU_BACKEND_URL:3000/get-upload-url', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fileName: `posts/${imageId}.jpg` })
-      });
+      const response = await fetch(imagem);
+      const blob = await response.blob();
+      const filename = `imagens/${Date.now()}.jpg`;
 
-      const { uploadUrl, imageUrl } = await response.json();
+      const params = {
+        Bucket: bucket_name,
+        Key: filename,
+        Body: blob,
+        ContentType: "image/jpeg",
+      }
 
-      // 2. Envia imagem diretamente pro S3
-      const imageData = await fetch(imagem);
-      const blob = await imageData.blob();
-
-      await fetch(uploadUrl, {
-        method: 'PUT',
-        body: blob,
-        headers: {
-          'Content-Type': blob.type
+      s3.upload(params, (err, data) => {
+        if (err) {
+          console.log("Erro no upload:", err);
+          Alert.alert("Erro no envion de imagem")
+        } else {
+          console.log("Imagem disponivel em:", data.location);
+          Alert.alert("Sucesso, imagem enviada")
+          setImagem(null)
         }
-      });
-
-      // 3. Salva post no Firestore
-      await addDoc(collection(db, 'posts'), {
-        descricao,
-        imagemUrl: imageUrl,
-        createdAt: serverTimestamp(),
-        userId: user.uid,
-        userName: user.displayName || 'Anônimo'
-      });
-
+      })
       navigation.goBack();
     } catch (err) {
-      Alert.alert('Erro', 'Não foi possível postar. Tente novamente.');
+      alert('Erro', 'Não foi possível postar. Tente novamente.');
       console.error('Erro ao postar:', err);
     }
   };

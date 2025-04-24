@@ -6,6 +6,15 @@ export const Container = styled.SafeAreaView`
   flex: 1;
 `;
 
+export const CommentInput = styled.TextInput`
+  height: 40px;
+  background-color: #f0f0f0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-top: 10px;
+`;
+
+
 export const ButtonPost = styled.TouchableOpacity`
   position: absolute;
   bottom: 5%;
