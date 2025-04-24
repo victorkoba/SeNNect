@@ -15,17 +15,9 @@ const SplashScreen = () => {
 
   return (
     <ImageBackground
-      source={require('../assets/9496474.png')} // Você pode trocar a imagem de fundo aqui
+      source={require('../assets/splash.jpg')} // Você pode trocar a imagem de fundo aqui
       style={styles.background}
     >
-      <View style={styles.container}>
-        <Image
-          source={require('../assets/logo-sennect-1.jpg')} // Troque pelo seu logo
-          style={styles.logo}
-          resizeMode="contain"
-        />
-        <Text style={styles.text}>Bem-vindo ao SENNect</Text>
-      </View>
     </ImageBackground>
   );
 };
@@ -46,11 +38,6 @@ const styles = StyleSheet.create({
     width: 380,
     height: 180,
     marginBottom: 20,
-  },
-  text: {
-    fontSize: 22,
-    color: '#fff',
-    fontWeight: 'bold',
   },
 });
 
