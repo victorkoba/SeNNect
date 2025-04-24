@@ -8,6 +8,7 @@ import Perfil from "../src/screens/Perfil";
 import Login from "../src/screens/Login";
 import Mensagens from "../src/screens/Mensagens";
 import Cadastro from "../src/screens/Cadastro"
+import CriarPost from "../src/screens/PaginaPrincipal/CriarPost";
 
 const Tab = createBottomTabNavigator();
 function BottomTabs() {
@@ -28,14 +29,14 @@ function BottomTabs() {
           options={{tabBarIcon:({color,size})=> {return <Feather name= 'home' color={color} size={size}/>}}}
         />
         <Tab.Screen
+            name="Mensagens"
+            component={Mensagens}
+            options={{tabBarIcon:({color,size})=> {return <Feather name= 'message-square' color={color} size={size}/>}}}
+        />
+        <Tab.Screen
           name="Perfil"
           component={Perfil}
           options={{tabBarIcon:({color,size})=> {return <Feather name= 'user' color={color} size={size}/>}}}
-        />
-        <Tab.Screen
-          name="Mensagens"
-          component={Mensagens}
-          options={{tabBarIcon:({color,size})=> {return <Feather name= 'message-square' color={color} size={size}/>}}}
         />
         
       </Tab.Navigator>
@@ -49,6 +50,7 @@ export default function NativeStack() {
     <Stack.Screen name="Login" component={Login} />
     <Stack.Screen name="Cadastro" component={Cadastro} />
     <Stack.Screen name="PaginaInicial" component={BottomTabs} />
+    <Stack.Screen name="CriarPost" component={CriarPost} />
   </Stack.Navigator>
   );
 }
