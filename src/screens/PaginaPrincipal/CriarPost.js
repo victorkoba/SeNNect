@@ -3,10 +3,10 @@ import { Text, Alert, Image } from 'react-native';
 import { Container, Input, ImageArea, UploadButton, UploadText, SubmitButton, SubmitText } from './stylesCriarPost';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
-import { storage, db } from '../../../firebaseConfig';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db } from '../../../firebaseConfig';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import uuid from 'react-native-uuid';
+import { getAuth } from 'firebase/auth';
 
 export default function CriarPost() {
   const [descricao, setDescricao] = useState('');
@@ -32,37 +32,51 @@ export default function CriarPost() {
   };
 
   const handlePostar = async () => {
-    if (!descricao || !imagem?.uri) {
-        alert('Erro', 'Adicione uma descrição e uma imagem.');
-        return;
-      }
-    
-      const imageId = uuid.v4();
-      const storageRef = ref(storage, `posts/${imageId}.jpg`);
-    
-      try {
-        // Pega imagem local e envia pro Firebase Storage
-        const response = await fetch(imagem.uri);
-        const blob = await response.blob();
-        await uploadBytes(storageRef, blob);
-    
-        const url = await getDownloadURL(storageRef);
-    
-        // Salva no Firestore
-        await addDoc(collection(db, 'posts'), {
-          descricao,
-          imagemUrl: url,
-          createdAt: serverTimestamp()
-        });
-    
-        navigation.goBack();
-      } catch (err) {
-        alert('Erro', 'Não foi possível postar. Tente novamente.');
-        console.log(err);
-      }
+    if (!descricao || !imagem) {
+      Alert.alert('Erro', 'Adicione uma descrição e uma imagem.');
+      return;
+    }
 
-    console.log('Post criado:', { descricao, imagem });
-    navigation.goBack();
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const imageId = uuid.v4();
+
+    try {
+      // 1. Pede presigned URL da API
+      const response = await fetch('http://SEU_BACKEND_URL:3000/get-upload-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fileName: `posts/${imageId}.jpg` })
+      });
+
+      const { uploadUrl, imageUrl } = await response.json();
+
+      // 2. Envia imagem diretamente pro S3
+      const imageData = await fetch(imagem);
+      const blob = await imageData.blob();
+
+      await fetch(uploadUrl, {
+        method: 'PUT',
+        body: blob,
+        headers: {
+          'Content-Type': blob.type
+        }
+      });
+
+      // 3. Salva post no Firestore
+      await addDoc(collection(db, 'posts'), {
+        descricao,
+        imagemUrl: imageUrl,
+        createdAt: serverTimestamp(),
+        userId: user.uid,
+        userName: user.displayName || 'Anônimo'
+      });
+
+      navigation.goBack();
+    } catch (err) {
+      Alert.alert('Erro', 'Não foi possível postar. Tente novamente.');
+      console.error('Erro ao postar:', err);
+    }
   };
 
   return (

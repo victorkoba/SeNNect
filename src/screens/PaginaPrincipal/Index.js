@@ -1,17 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, FlatList, TouchableOpacity } from 'react-native';
 import { Container, ButtonPost, PostImage, PostContainer, LikeButton, LikeText } from './styles';
 import Feather from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { db } from '../../../firebaseConfig';
 
-function PaginaInicial(){
+function PaginaInicial() {
   const navigation = useNavigation();
+  const [posts, setPosts] = useState([]);
 
-  // Simulando posts
-  const [posts, setPosts] = useState([
-    { id: '1', image: 'https://placekitten.com/400/300', liked: false },
-    { id: '2', image: 'https://placekitten.com/401/300', liked: false },
-  ]);
+  useEffect(() => {
+    const q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const lista = snapshot.docs.map(doc => ({
+        id: doc.id,
+        image: doc.data().imagemUrl,
+        descricao: doc.data().descricao,
+        userName: doc.data().userName || 'Usuário desconhecido',
+        liked: false,
+      }));
+      setPosts(lista);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const toggleLike = (id) => {
     setPosts(posts.map(post => 
@@ -21,7 +34,9 @@ function PaginaInicial(){
 
   const renderItem = ({ item }) => (
     <PostContainer>
+      <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>{item.userName}</Text>
       <PostImage source={{ uri: item.image }} />
+      <Text style={{ marginVertical: 5 }}>{item.descricao}</Text>
       <LikeButton onPress={() => toggleLike(item.id)}>
         <Feather 
           name={item.liked ? 'heart' : 'heart'} 
@@ -33,7 +48,7 @@ function PaginaInicial(){
     </PostContainer>
   );
 
-  return(
+  return (
     <Container>
       <FlatList 
         data={posts}
