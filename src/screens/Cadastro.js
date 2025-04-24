@@ -22,7 +22,7 @@ import {
 import { getApp } from 'firebase/app';
 import s3 from '../../awsConfig';
 import aws from 'aws-sdk';
-import { auth, db } from '../../firebaseConfig'; 
+import { auth, db } from '../../firebaseConfig';
 
 
 const S3_BUCKET = '';
@@ -97,67 +97,56 @@ const Cadastro = ({ navigation }) => {
   };
 
   return (
-    <ImageBackground
-      source={require('../assets/v915-wit-008-b.jpg')}
-      style={styles.background}
-      resizeMode="cover"
-    >
+
+    <View style={styles.container}>
       <Pressable style={styles.voltar} onPress={() => navigation.goBack()}>
         <Text style={styles.voltarTexto}>← Voltar</Text>
       </Pressable>
+      <Text style={styles.titulo}>Crie sua conta</Text>
 
-      <View style={styles.container}>
-        <Text style={styles.titulo}>CRIE SUA CONTA</Text>
+      <Pressable onPress={pickImage} style={styles.imageContainer}>
+        {imageUri ? (
+          <Image source={{ uri: imageUri }} style={styles.image} />
+        ) : (
+          <Text style={styles.imagePlaceholder}>Selecionar Foto</Text>
+        )}
+      </Pressable>
 
-        <Pressable onPress={pickImage} style={styles.imageContainer}>
-          {imageUri ? (
-            <Image source={{ uri: imageUri }} style={styles.image} />
-          ) : (
-            <Text style={styles.imagePlaceholder}>Selecionar Foto</Text>
-          )}
-        </Pressable>
+      <TextInput
+        style={styles.input}
+        placeholder="Nome"
+        placeholderTextColor="#aaa"
+        value={nome}
+        onChangeText={setNome}
+      />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Nome"
-          placeholderTextColor="#aaa"
-          value={nome}
-          onChangeText={setNome}
-        />
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        placeholderTextColor="#aaa"
+        autoCapitalize="none"
+        keyboardType="email-address"
+        value={email}
+        onChangeText={setEmail}
+      />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#aaa"
-          autoCapitalize="none"
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-        />
+      <TextInput
+        style={styles.input}
+        placeholder="Senha"
+        placeholderTextColor="#aaa"
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Senha"
-          placeholderTextColor="#aaa"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-
-        <Pressable style={styles.botao} onPress={handleRegister}>
-          <Text style={styles.botaoTexto}>Cadastrar</Text>
-        </Pressable>
-      </View>
-    </ImageBackground>
+      <Pressable style={styles.botao} onPress={handleRegister}>
+        <Text style={styles.botaoTexto}>Cadastrar</Text>
+      </Pressable>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
   container: {
     flex: 1,
     padding: 24,
@@ -166,7 +155,7 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#2D2D2D',
+    color: '#000',
     textAlign: 'center',
     marginBottom: 32,
   },
@@ -180,14 +169,14 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   botao: {
-    backgroundColor: '#C94C4C',
+    backgroundColor: '#ff0000',
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 8,
   },
   botaoTexto: {
-    color: '#fff',
+    color: '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -204,7 +193,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: '#eee',
+    backgroundColor: '#dfdfdf',
     textAlign: 'center',
     textAlignVertical: 'center',
     lineHeight: 120,
@@ -222,7 +211,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   voltarTexto: {
-    color: '#C94C4C',
+    color: '#ff0000',
     fontSize: 18,
     fontWeight: 'bold',
   },

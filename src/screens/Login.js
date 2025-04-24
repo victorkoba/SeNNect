@@ -6,7 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  ImageBackground,
+  Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -24,14 +24,10 @@ const RealizarLogin = () => {
   };
 
   return (
-    <ImageBackground
-      source={require('../assets/9496474.png')}
-      style={styles.background}
-      resizeMode="cover"
-    >
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.cardLogin}>
-          <Text style={styles.title}>LOGIN</Text>
+        <Image source={require('../assets/logo-sennect.jpg')} style={{ width: 100, height: 100 }} />
+          <Text style={styles.title}>Login</Text>
 
           <TextInput
             style={styles.input}
@@ -57,20 +53,14 @@ const RealizarLogin = () => {
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.navigate("Cadastro")}>
-            <Text style={styles.botCadastrar}>Cadastre-se!</Text>
+            <Text style={styles.botCadastrar}>Não possui uma conta? Cadastre-se!</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
   container: {
     flexGrow: 1,
     justifyContent: 'center',
@@ -95,7 +85,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#000',
     marginBottom: 25,
   },
   input: {
@@ -109,7 +99,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   button: {
-    backgroundColor: '#C94C4C',
+    backgroundColor: '#ff0000',
     paddingVertical: 14,
     paddingHorizontal: 25,
     borderRadius: 8,
@@ -118,13 +108,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonText: {
-    color: '#fff',
+    color: '#ffffff',
     fontWeight: 'bold',
     fontSize: 16,
   },
   botCadastrar: {
     marginTop: 20,
-    color: '#C94C4C',
+    color: '#ff0000',
     fontSize: 16,
     textDecorationLine: 'underline',
   },
