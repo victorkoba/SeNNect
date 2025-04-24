@@ -5,7 +5,7 @@ import { Container, Input, ImageArea, UploadButton, UploadText, SubmitButton, Su
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { db } from '../../../firebaseConfig';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDoc, doc } from 'firebase/firestore';
 import uuid from 'react-native-uuid';
 import { getAuth } from 'firebase/auth';
 import s3 from '../../../awsConfig'
@@ -46,31 +46,49 @@ export default function CriarPost() {
     const imageId = uuid.v4();
   
     try {
+      // 🔍 Pega os dados do Firestore
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      const userData = userDoc.exists() ? userDoc.data() : null;
+      const nomeUsuario = userData ? userData.nome : 'Desconhecido';
+  
       const response = await fetch(imagem);
       const blob = await response.blob();
-      const filename = `imagens/${Date.now()}.jpg`;
-
+      const filename = `imagens/${imageId}.jpg`;
+  
       const params = {
         Bucket: bucket_name,
         Key: filename,
         Body: blob,
         ContentType: "image/jpeg",
-      }
-
-      s3.upload(params, (err, data) => {
+      };
+  
+      s3.upload(params, async (err, data) => {
         if (err) {
           console.log("Erro no upload:", err);
-          Alert.alert("Erro no envion de imagem")
+          alert("Erro", "Erro no envio da imagem.");
         } else {
-          console.log("Imagem disponivel em:", data.location);
-          Alert.alert("Sucesso, imagem enviada")
-          setImagem(null)
+          try {
+            await addDoc(collection(db, 'posts'), {
+              descricao: descricao,
+              imagemUrl: data.Location,
+              createdAt: serverTimestamp(),
+              userId: user.uid,
+              userName: nomeUsuario,
+            });
+  
+            alert("Sucesso", "Post publicado com sucesso!");
+            setImagem(null);
+            setDescricao('');
+            navigation.goBack();
+          } catch (error) {
+            console.error('Erro ao salvar post no Firestore:', error);
+            alert("Erro", "Não foi possível salvar o post.");
+          }
         }
-      })
-      navigation.goBack();
+      });
     } catch (err) {
-      alert('Erro', 'Não foi possível postar. Tente novamente.');
       console.error('Erro ao postar:', err);
+      alert('Erro', 'Não foi possível postar. Tente novamente.');
     }
   };
 
