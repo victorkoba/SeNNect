@@ -1,6 +1,6 @@
 // Miguel Francisco da Silva Sales e Victor Luiz Koba Batista
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, Image, FlatList } from 'react-native';
 import { Container, ButtonPost, PostImage, PostContainer, LikeButton, LikeText } from './styles';
 import Feather from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
