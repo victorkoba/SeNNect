@@ -1,5 +1,9 @@
 {
   "expo": {
+    "updates": {
+      "enabled": true,
+      "fallbackToCacheTimeout": 3000
+    },
     "name": "Sennect",
     "slug": "Sennect",
     "version": "1.0.0",
