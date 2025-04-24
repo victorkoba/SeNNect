@@ -12,9 +12,8 @@ import Cadastro from "../src/screens/Cadastro";
 import SplashScreen from "../src/screens/SplashScreen";
 import CriarPost from "../src/screens/PaginaPrincipal/CriarPost";
 
-// Telas de mensagens
+// Tela de mensagens
 import Mensagens from "../src/screens/Mensagem/Mensagens"; // Tela que lista ou exibe as mensagens
-import EnviarMensagem from "../src/screens/Mensagem/EnviarMensagem"; // Tela de chat individual
 
 const Tab = createBottomTabNavigator();
 
@@ -76,7 +75,6 @@ export default function NativeStack() {
       <Stack.Screen name="Cadastro" component={Cadastro} />
       <Stack.Screen name="PaginaInicial" component={BottomTabs} />
       <Stack.Screen name="CriarPost" component={CriarPost} />
-      <Stack.Screen name="EnviarMensagem" component={EnviarMensagem} />
       <Stack.Screen name="Mensagens" component={Mensagens} />
     </Stack.Navigator>
   );
