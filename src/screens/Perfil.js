@@ -1,160 +1,194 @@
 // Miguel Francisco da Silva Sales e Victor Luiz Koba Batista
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
   TextInput,
-  Pressable,
   Image,
+  Pressable,
   StyleSheet,
   Alert,
+  TouchableOpacity,
+  ScrollView,
 } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-} from 'firebase/auth';
-import {
-  getFirestore,
-  doc,
-  setDoc,
-} from 'firebase/firestore';
+import { getAuth, updatePassword } from 'firebase/auth';
+import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { getApp } from 'firebase/app';
+import * as ImagePicker from 'expo-image-picker';
+import s3 from '../../awsConfig';
 
-const S3_BUCKET = '';
+const S3_BUCKET = 'sennect-30-22';
 
-export default function Perfil(){
-    const registerUser = async (email, password, nome, imageUri) => {
-        const auth = getAuth(getApp());
-        const firestore = getFirestore(getApp());
-      
-        try {
-          const userCredential = await createUserWithEmailAndPassword(
-            auth,
-            email,
-            password
-          );
-          const user = userCredential.user;
-      
-          const filename = imageUri.substring(imageUri.lastIndexOf('/') + 1);
-          const filePath = `perfil_imagem/${user.uid}/${filename}`;
-      
-          const response = await fetch(imageUri);
-          const blob = await response.blob();
-      
-          const uploadParams = {
-            Bucket: S3_BUCKET,
-            Key: filePath,
-            Body: blob,
-            ContentType: 'image/jpeg',
-          };
-      
-          const uploadResult = await s3.upload(uploadParams).promise();
-          const photoURL = uploadResult.Location;
-      
-          await setDoc(doc(firestore, 'users', user.uid), {
-            uid: user.uid,
-            email: email,
-            nome: nome,
-            photoURL: photoURL,
-          });
-      
-          console.log('Usuário registrado e imagem salva no S3');
-          return user;
-        } catch (error) {
-          console.error('Erro ao registrar usuário:', error);
-          alert('Erro', 'Não foi possível registrar o usuário.');
+const Perfil = ({ navigation }) => {
+  const auth = getAuth(getApp());
+  const firestore = getFirestore(getApp());
+
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [imageUri, setImageUri] = useState(null);
+  const [initialPhotoURL, setInitialPhotoURL] = useState(null);
+  const [novaSenha, setNovaSenha] = useState('');
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [mostrarCampoSenha, setMostrarCampoSenha] = useState(false);
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        setEmail(user.email);
+        const userRef = doc(firestore, 'users', user.uid);
+        const docSnap = await getDoc(userRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setNome(data.nome);
+          setImageUri(data.photoURL);
+          setInitialPhotoURL(data.photoURL);
         }
-      };
-      
-      const Cadastro = ({ navigation }) => {
-        const [email, setEmail] = useState('');
-        const [password, setPassword] = useState('');
-        const [nome, setNome] = useState('');
-        const [imageUri, setImageUri] = useState(null);
-      
-        const pickImage = async () => {
-          let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            quality: 1,
-          });
-          console.log(result )
-      
-          if (!result.canceled && result.assets.length > 0) {
-            setImageUri(result.assets[0].uri);
-          }
-        };
-      
-        const handleRegister = async () => {
-          if (email && password && nome && imageUri) {
-            await registerUser(email, password, nome, imageUri);
-            alert('Sucesso', 'Usuário registrado com sucesso!');
-          } else {
-            alert('Erro', 'Por favor, preencha todos os campos.');
-          }
-        };
-      
-        return (
-          <View style={styles.container}>
-            <Text style={styles.titulo}>Criar Conta</Text>
-      
-            <Pressable onPress={pickImage} style={styles.imageContainer}>
-              {imageUri ? (
-                <Image source={{ uri: imageUri }} style={styles.image} />
-              ) : (
-                <Text style={styles.imagePlaceholder}>Selecionar Foto</Text>
-              )}
-            </Pressable>
-      
-            <TextInput
-              style={styles.input}
-              placeholder="Nome"
-              placeholderTextColor="#aaa"
-              value={nome}
-              onChangeText={setNome}
-            />
-      
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              placeholderTextColor="#aaa"
-              autoCapitalize="none"
-              keyboardType="email-address"
-              value={email}
-              onChangeText={setEmail}
-            />
-      
-            <TextInput
-              style={styles.input}
-              placeholder="Senha"
-              placeholderTextColor="#aaa"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
-      
-            <Pressable style={styles.botao} onPress={handleRegister}>
-              <Text style={styles.botaoTexto}>Cadastrar</Text>
-            </Pressable>
-          </View>
-        );
-      };
       }
-      
+    };
+    loadUserData();
+  }, []);
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets.length > 0) {
+      setImageUri(result.assets[0].uri);
+    }
+  };
+
+  const uploadImageToS3 = async (imageUri, uid) => {
+    const filename = imageUri.substring(imageUri.lastIndexOf('/') + 1);
+    const filePath = `perfil_imagem/${uid}/${filename}`;
+
+    const response = await fetch(imageUri);
+    const blob = await response.blob();
+
+    const uploadParams = {
+      Bucket: S3_BUCKET,
+      Key: filePath,
+      Body: blob,
+      ContentType: 'image/jpeg',
+    };
+
+    const uploadResult = await s3.upload(uploadParams).promise();
+    return uploadResult.Location;
+  };
+
+  const handleSalvar = async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const userRef = doc(firestore, 'users', user.uid);
+    let photoURL = initialPhotoURL;
+
+    if (imageUri !== initialPhotoURL) {
+      photoURL = await uploadImageToS3(imageUri, user.uid);
+    }
+
+    await updateDoc(userRef, {
+      nome,
+      photoURL,
+    });
+
+    if (mostrarCampoSenha && novaSenha) {
+      try {
+        await updatePassword(user, novaSenha);
+        Alert.alert('Sucesso', 'Senha alterada com sucesso!');
+        setNovaSenha('');
+        setMostrarCampoSenha(false);
+      } catch (error) {
+        Alert.alert('Erro', 'Não foi possível alterar a senha.');
+        return;
+      }
+    }
+
+    navigation.navigate('PaginaInicial');
+    Alert.alert('Sucesso', 'Informações atualizadas com sucesso!');
+  };
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.titulo}>Perfil do Usuário</Text>
+
+      <Pressable onPress={pickImage} style={styles.imageContainer}>
+        {imageUri ? (
+          <Image source={{ uri: imageUri }} style={styles.image} />
+        ) : (
+          <Text style={styles.imagePlaceholder}>Selecionar Foto</Text>
+        )}
+      </Pressable>
+
+      <View style={styles.card}>
+        <TextInput
+          style={styles.input}
+          value={nome}
+          onChangeText={setNome}
+          placeholder="Nome"
+          placeholderTextColor="#aaa"
+        />
+
+        <TextInput
+          style={[styles.input, { backgroundColor: '#eee' }]}
+          value={email}
+          editable={false}
+        />
+
+        <TouchableOpacity
+          style={styles.botaoSecundario}
+          onPress={() => setMostrarCampoSenha(!mostrarCampoSenha)}
+        >
+          <Text style={styles.botaoTexto}>
+            {mostrarCampoSenha ? 'Cancelar Alteração de Senha' : 'Alterar Senha'}
+          </Text>
+        </TouchableOpacity>
+
+        {mostrarCampoSenha && (
+          <View style={styles.senhaContainer}>
+            <TextInput
+              style={[styles.input, { flex: 1 }]}
+              value={novaSenha}
+              onChangeText={setNovaSenha}
+              placeholder="Nova Senha"
+              secureTextEntry={!mostrarSenha}
+            />
+          </View>
+        )}
+
+        <Pressable style={styles.botao} onPress={handleSalvar}>
+          <Text style={styles.botaoTexto}>Salvar Alterações</Text>
+        </Pressable>
+      </View>
+    </ScrollView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f2f2f2',
     padding: 24,
-    justifyContent: 'center',
+    paddingBottom: 48,
+    flexGrow: 1,
   },
   titulo: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
-    color: '#2D2D2D',
     textAlign: 'center',
-    marginBottom: 32,
+    marginBottom: 24,
+    color: '#222',
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 3,
   },
   input: {
     borderWidth: 1,
@@ -166,16 +200,23 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   botao: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#ff4d4d',
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 12,
+  },
+  botaoSecundario: {
+    backgroundColor: '#888',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 12,
   },
   botaoTexto: {
     color: '#fff',
-    fontSize: 16,
     fontWeight: 'bold',
+    fontSize: 16,
   },
   imageContainer: {
     alignItems: 'center',
@@ -190,12 +231,18 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: '#eee',
+    backgroundColor: '#dfdfdf',
     textAlign: 'center',
     textAlignVertical: 'center',
     lineHeight: 120,
     color: '#777',
     fontSize: 16,
   },
+  senhaContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
 });
 
+export default Perfil;

@@ -1,3 +1,4 @@
+// Miguel Francisco da Silva Sales e Victor Luiz Koba Batista
 import React, { useState } from 'react';
 import { View, TextInput, Button, Alert } from 'react-native';
 import { db } from '../../../firebaseConfig';
