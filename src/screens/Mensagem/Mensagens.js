@@ -1,3 +1,4 @@
+// Miguel Francisco da Silva Sales e Victor Luiz Koba Batista
 import React from 'react';
 import { View, FlatList, Text } from 'react-native';
 import useMensagens from './useMensagens';

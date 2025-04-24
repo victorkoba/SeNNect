@@ -1,3 +1,4 @@
+// Miguel Francisco da Silva Sales e Victor Luiz Koba Batista
 import React, { useState } from 'react';
 import { Text, Alert, Image } from 'react-native';
 import { Container, Input, ImageArea, UploadButton, UploadText, SubmitButton, SubmitText } from './stylesCriarPost';

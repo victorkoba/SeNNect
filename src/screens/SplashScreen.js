@@ -1,3 +1,4 @@
+// Miguel Francisco da Silva Sales e Victor Luiz Koba Batista
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Image, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native';

@@ -1,3 +1,4 @@
+// Miguel Francisco da Silva Sales e Victor Luiz Koba Batista
 import React from "react";
 import "react-native-gesture-handler"
 import { NavigationContainer } from "@react-navigation/native";

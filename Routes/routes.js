@@ -1,3 +1,4 @@
+// Miguel Francisco da Silva Sales e Victor Luiz Koba Batista
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";

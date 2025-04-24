@@ -1,3 +1,4 @@
+// Miguel Francisco da Silva Sales e Victor Luiz Koba BatistaS
 import { useEffect, useState } from 'react';
 import { db } from '../../../firebaseConfig';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';

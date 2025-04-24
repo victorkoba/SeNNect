@@ -1,3 +1,4 @@
+// Miguel Francisco da Silva Sales e Victor Luiz Koba Batista
 import styled from 'styled-components/native';
 
 export const Container = styled.SafeAreaView`
