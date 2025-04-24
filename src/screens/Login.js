@@ -21,7 +21,7 @@ const RealizarLogin = ({ navigation }) => {
       const auth = getAuth(app);
       signInWithEmailAndPassword(auth, email, password)
           .then(() => {
-              navigation.navigate('PaginaPrincipal');
+              navigation.navigate('PaginaInicial');
           })
           .catch((error) => {
               console.error('Falha no login:', error);
